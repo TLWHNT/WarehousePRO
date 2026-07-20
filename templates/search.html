@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Поиск: {{ keyword }}{% endblock %}
+{% block content %}
+<h3 class="animate-fade-in"><i class="bi bi-search"></i> Результаты по запросу «{{ keyword }}»</h3>
+<div class="card mt-3 animate-fade-in">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Фото</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Кол-во</th>
+                        <th>Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in results %}
+                    <tr class="product-card">
+                        <td>{{ p.id }}</td>
+                        <td>
+                            {% if p.image_path %}
+                                <img src="{{ url_for('static', filename=p.image_path) }}" 
+                                     class="product-image" style="width: 50px; height: 50px;">
+                            {% else %}
+                                <div style="width: 50px; height: 50px; background: #e0e0e0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-image" style="color: #999;"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ p.name }}</strong></td>
+                        <td><span class="badge bg-secondary">{{ p.category }}</span></td>
+                        <td>{{ p.quantity }}</td>
+                        <td>{{ "{:,.2f}".format(p.price)|replace(',', ' ') }} ₽</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center text-muted py-4">Ничего не найдено</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

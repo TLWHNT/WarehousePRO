@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Дашборд{% endblock %}
+{% block content %}
+<h3 class="mb-4 animate-fade-in"><i class="bi bi-graph-up"></i> Аналитика склада</h3>
+
+<div class="row g-3 mb-4 animate-fade-in">
+    <div class="col-md-4"><div class="card stat-card primary"><div class="card-body">
+        <div class="text-muted small">Наименований</div>
+        <div class="h2 mb-0">{{ stats.count }}</div>
+    </div></div></div>
+    <div class="col-md-4"><div class="card stat-card success"><div class="card-body">
+        <div class="text-muted small">Всего единиц</div>
+        <div class="h2 mb-0">{{ stats.total_qty }}</div>
+    </div></div></div>
+    <div class="col-md-4"><div class="card stat-card warning"><div class="card-body">
+        <div class="text-muted small">Стоимость склада</div>
+        <div class="h4 mb-0">{{ "{:,.2f}".format(stats.total_value)|replace(',', ' ') }} ₽</div>
+    </div></div></div>
+</div>
+
+<div class="row g-3 animate-fade-in">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Стоимость по категориям</div>
+            <div class="card-body"><canvas id="catChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Товары, требующие внимания</div>
+            <div class="card-body">
+                <h6 class="text-warning"><i class="bi bi-exclamation-triangle"></i> Малый остаток (≤5)</h6>
+                <ul class="list-group mb-3">
+                    {% for p in stats.low_stock %}
+                        <li class="list-group-item d-flex justify-content-between animate-fade-in">
+                            {{ p.name }} <span class="badge bg-warning text-dark">{{ p.quantity }} шт.</span>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">Всё в порядке 👍</li>
+                    {% endfor %}
+                </ul>
+                <h6 class="text-danger"><i class="bi bi-x-circle"></i> Закончились</h6>
+                <ul class="list-group">
+                    {% for name in stats.out_of_stock %}
+                        <li class="list-group-item animate-fade-in">{{ name }}</li>
+                    {% else %}
+                        <li class="list-group-item text-muted">Ничего не закончилось</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const labels = {{ stats.by_category | map(attribute='category') | list | tojson }};
+const values = {{ stats.by_category | map(attribute='value') | list | tojson }};
+
+const chartOptions = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'bottom',
+            labels: { padding: 20, font: { size: 14 } }
+        },
+        tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 12,
+            titleFont: { size: 16 },
+            bodyFont: { size: 14 },
+            cornerRadius: 8,
+            callbacks: {
+                label: function(context) {
+                    const value = context.parsed || context.raw;
+                    return ` ${value.toLocaleString('ru-RU')} ₽`;
+                }
+            }
+        }
+    },
+    animation: {
+        duration: 1000,
+        easing: 'easeOutQuart'
+    }
+};
+
+new Chart(document.getElementById('catChart'), {
+    type: 'doughnut',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: values,
+            backgroundColor: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1','#20c997','#fd7e14'],
+            borderWidth: 3,
+            borderColor: '#fff'
+        }]
+    },
+    options: chartOptions
+});
+</script>
+{% endblock %}
