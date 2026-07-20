@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Добавить товар{% endblock %}
+{% block content %}
+<div class="card animate-fade-in">
+    <div class="card-header"><h4 class="mb-0"><i class="bi bi-plus-circle"></i> Новый товар</h4></div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label class="form-label">Название *</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Категория *</label>
+                            <input type="text" name="category" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Количество *</label>
+                            <input type="number" name="quantity" class="form-control" min="0" value="0" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Цена (₽) *</label>
+                            <input type="number" name="price" class="form-control" min="0" step="0.01" value="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Фото товара</label>
+                        <input type="file" name="image" class="form-control" accept="image/*" 
+                               onchange="previewImage(this, 'imagePreview')">
+                        <img id="imagePreview" style="display: none; max-width: 100%; margin-top: 10px; border-radius: 8px;">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Добавить</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

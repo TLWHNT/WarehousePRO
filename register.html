@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Создать пользователя{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card animate-fade-in">
+            <div class="card-header"><h4 class="mb-0"><i class="bi bi-person-plus"></i> Новый пользователь</h4></div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя *</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль *</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Роль *</label>
+                        <select name="role" class="form-select" required>
+                            <option value="viewer">Наблюдатель (только просмотр)</option>
+                            <option value="manager">Кладовщик (приход/расход, редактирование)</option>
+                            <option value="admin">Администратор (полный доступ)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Создать</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
